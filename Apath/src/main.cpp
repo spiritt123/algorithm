@@ -6,12 +6,10 @@
 
 #include <SFML/Graphics.hpp>
 
-
-
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
-
+    window.setFramerateLimit(30);
 
     while (window.isOpen())
     {
