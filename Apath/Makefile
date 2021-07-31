@@ -5,7 +5,7 @@ CFLAGS = -c -Wall
 LDFLAGS = 
 INCLUDE = include 
 
-SRC = main
+SRC = main map
 SOURCES = $(addsuffix .cpp, $(addprefix src/, $(SRC))) 
 OBJECTS = $(SOURCES:.cpp=.o) 
 EXECUTABLE = out
