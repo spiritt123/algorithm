@@ -3,7 +3,9 @@
 # A\*path
 
 start
+
 $ make 
+
 $ ./out
 
 Hotkey:
