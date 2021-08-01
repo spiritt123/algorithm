@@ -15,6 +15,9 @@ int main(int argc, char* argv[])
 
     show(place, height, width);
 
+    for (int i = 0; i < height; ++i)
+        delete[] place[i];
+    delete[] place;
     return 0;
 }
 
