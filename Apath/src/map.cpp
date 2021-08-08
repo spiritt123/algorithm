@@ -60,9 +60,9 @@ int Map::distant(point start, point end)
     return (int)sqrt(distant.x * distant.x + distant.y * distant.y);
 }
 
-std::list<Map::xmap_cell> Map::findNewNeighbour(xmap_cell cell, point target)
+void Map::findNewNeighbour(std::list<Map::xmap_cell> &active_cells, point target)
 {
-    std::list<xmap_cell> new_cells;
+    Map::xmap_cell cell = active_cells.front();
     cell.visited = true;
     point center = cell.position;
     point lt = center, rb = center;
@@ -83,19 +83,35 @@ std::list<Map::xmap_cell> Map::findNewNeighbour(xmap_cell cell, point target)
             if (_xmap[i][j].value == wall) continue;
             
             int sum = distant_to_start + addit_distant[k] + distant(_xmap[i][j].position, target) * 10;
-            if (_xmap[i][j].visited == true && 
-                sum > _xmap[i][j].sum)
-                continue;
+            if (_xmap[i][j].visited == true)
+            {
+                if (sum >= _xmap[i][j].sum)
+                {
+                    continue;
+                }
+                else
+                {
+                    for (auto &cell : active_cells)
+                    {
+                        if (cell.position == _xmap[i][j].position)
+                        {
+                            cell.distant_to_start = distant_to_start + addit_distant[k];
+                            cell.sum = sum;
+                            cell.source = center;
+                            continue; 
+                        }
+                    }
+                }
+            } 
 
             _xmap[i][j].distant_to_start = distant_to_start + addit_distant[k];
             _xmap[i][j].sum = sum;
             _xmap[i][j].source = center;
             _xmap[i][j].visited = true;
 
-            new_cells.push_back(_xmap[i][j]);
+            active_cells.push_back(_xmap[i][j]);
         }
     }
-    return new_cells;
 }
  
 std::list<Map::point> Map::createPath(point start, point target)
@@ -113,10 +129,7 @@ std::list<Map::point> Map::createPath(point start, point target)
     {
         active_cells.sort([](const xmap_cell &a, const xmap_cell &b)
                             { return a.sum < b.sum;} );
-        active_cells.splice(
-                active_cells.end(), 
-                findNewNeighbour(active_cells.front(), target)
-        );
+        findNewNeighbour(active_cells, target);
         active_cells.erase(active_cells.begin());
     }
 
@@ -134,4 +147,5 @@ void Map::applyPathToMap(std::list<point> path_vectors, int **map)
         map[cell.y][cell.x] = path;
     }
 }
+
 

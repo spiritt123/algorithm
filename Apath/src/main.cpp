@@ -15,7 +15,7 @@ void show_manual();
 
 int main()
 {
-    const int width = 40;
+    const int width  = 40;
     const int height = 20;
     sf::RenderWindow window(sf::VideoMode(width * size_cell, height * size_cell), "Press H for insormation");
     window.setFramerateLimit(30);

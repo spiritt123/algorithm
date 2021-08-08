@@ -3,6 +3,7 @@
 
 #include <climits>
 #include <cmath>
+#include <map>
 #include <list>
 #include <SFML/Graphics.hpp>
 #include "enums.h"
@@ -21,6 +22,19 @@ public:
         point(int X, int Y);
         ~point();
         int x, y;
+        friend bool operator==(const Map::point &first, const Map::point &second)
+        {
+            return  first.x == second.x &&
+                    first.y == second.y;
+        }
+        friend bool operator<(const Map::point &first, const Map::point &second)
+        {
+            if (first.x < second.x)
+                return true;
+            if (first.x == second.x && first.y < second.y)
+                return true;
+            return false;
+        }
     };
 
     struct xmap_cell
@@ -39,12 +53,13 @@ private:
     xmap_cell **_xmap;
 
 private:
+    void print();
     void clear_map();
     int distant(point start, point end);
 
     void convertMapToXmap(int **map);
     
-    std::list<xmap_cell> findNewNeighbour(xmap_cell cell, point target);
+    void findNewNeighbour(std::list<Map::xmap_cell> &active_cells, point target);
     
     std::list<point> createPath(point start, point target);
     
