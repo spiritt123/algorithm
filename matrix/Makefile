@@ -19,7 +19,9 @@ $(EXECUTABLE): $(OBJECTS)
 %.o: %.cpp 	
 	g++ -c -o $@ $< -I$(INCLUDE) 
 
-clear: 	
-	rm -f src/*.o $(EXECUTABLE) 
+lib:
+	ar rcs matrix.a src/matrix.o
 
+clear: 	
+	rm -f src/*.o $(EXECUTABLE) matrix.a
 

@@ -1,4 +1,5 @@
 #include "matrix.h"
+#include "exceptions.h"
 
 Matrix::Matrix(size_t rows, size_t cols, double base_value)
 {
@@ -17,7 +18,7 @@ Matrix::Matrix(std::istream& in)
     in >> rows >> cols;
     if (rows < 1 || cols < 1)
     {
-        //throw InvalidMatrixStream();
+        throw InvalidMatrixStream();
     }
 
     _matrix.resize(rows);
@@ -29,7 +30,7 @@ Matrix::Matrix(std::istream& in)
         {
             if (!(in >> base_value))
             {
-                //throw InvalidMatrixStream();
+                throw InvalidMatrixStream();
             }
             col_cells = base_value;
         }
@@ -58,21 +59,58 @@ size_t Matrix::getCols() const
     return _matrix.size() == 0 ? 0 : _matrix[0].size();
 }
 
+void Matrix::addColum(const std::vector<double> &vector)
+{
+    if (vector.size() != getRows())
+        throw DimensionMismatch(*this, Matrix(vector));
+
+    for (size_t i = 0; i < getRows(); ++i)
+    {
+        _matrix[i].push_back(vector[i]);
+    }
+}
+
+void Matrix::addRow(const std::vector<double> &vector)
+{
+    if (vector.size() != getCols())
+        throw DimensionMismatch(*this, Matrix(vector));
+
+    _matrix.push_back(vector);
+}
+
+void Matrix::changeRow(const std::vector<double> &vector, size_t row)
+{
+    if (row < 0 || row >= getRows())
+        throw OutOfRange(0, row, *this);
+
+    _matrix[row] = vector;
+}
+
+void Matrix::changeColum(const std::vector<double> &vector, size_t colum)
+{
+    if (colum < 0 || colum >= getCols())
+        throw OutOfRange(colum, 0, *this);
+    
+    for (size_t j = 0; j < getCols(); ++j)
+    {
+        _matrix[j][colum] = vector[j];
+    }
+}
+
+    
 double Matrix::operator()(size_t i, size_t j) const
 {
     if (i >= getRows() || j >= getCols())
-    {
-        //throw OutOfRange(i, j, *this);
-    }
+        throw OutOfRange(i, j, *this);
+
     return _matrix[i][j];
 }
 
 double& Matrix::operator()(size_t i, size_t j)
 {
     if (i >= getRows() || j >= getCols())
-    {
-        //throw OutOfRange(i, j, *this);
-    }
+        throw OutOfRange(i, j, *this);
+    
     return _matrix[i][j];
 }
 
@@ -101,6 +139,19 @@ bool Matrix::operator==(const Matrix& matrix) const
 bool Matrix::operator!=(const Matrix& matrix) const
 {
     return !(*this == matrix);
+}
+
+void Matrix::operator=(const Matrix& matrix)
+{
+    _matrix.resize(matrix.getRows());
+    for (size_t i = 0; i < matrix.getRows(); ++i)
+    {
+        _matrix[i].resize(getCols());
+        for (size_t j = 0; j < matrix.getCols(); ++j)
+        {
+            _matrix[i][j] = matrix(i, j);
+        }
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const Matrix& matrix)
@@ -171,7 +222,7 @@ Matrix Matrix::operator*(const Matrix& matrix) const
 {
     if (getCols() != matrix.getRows())
     {
-        //throw DimensionMismatch(*this, matrix);
+        throw DimensionMismatch(*this, matrix);
     }
 
     Matrix new_matrix(getRows(), matrix.getCols());
@@ -222,13 +273,12 @@ Matrix Matrix::minor(size_t deleted_row, size_t deleted_col) const
         deleted_row >= getRows() || 
         deleted_col >= getCols())
     {
-        //throw OutOfRange();
+        throw OutOfRange(deleted_row, deleted_col, *this);
     }
 
     size_t row = getRows() - 1;
     size_t col = getCols() - 1;
     Matrix new_matrix(row, col);
-    
     size_t row_flag = 0;
     for (size_t i = 0; i < row; ++i)
     {
@@ -236,11 +286,11 @@ Matrix Matrix::minor(size_t deleted_row, size_t deleted_col) const
             row_flag = 1;
 
         size_t col_flag = 0;
-        for (size_t j = 0; j < col; ++i)
+        for (size_t j = 0; j < col; ++j)
         {
             if (j == deleted_col)
                 col_flag = 1;
-            new_matrix(i, j) = _matrix[i + row_flag][j + row_flag];
+            new_matrix(i, j) = _matrix[i + row_flag][j + col_flag];
         }
     }
     return new_matrix;
@@ -253,19 +303,17 @@ double Matrix::det() const
 
     if (rows != cols)
     {
-        //throw DimensionMismatch(*this);
+        throw DimensionMismatch(*this);
     }
     if (rows == 1)
     {
         return _matrix[0][0];
     }
     double result = 0;
-    double val = 0;
     for (size_t i = 0; i < rows; i++)
     {
         Matrix new_matrix = minor(0, i);
-        val = new_matrix.det();
-        result += _matrix[0][i] * pow(-1, 2 + i) * (val);
+        result += _matrix[0][i] * pow(-1, 2 + i) * new_matrix.det();
     }
     return result;
 }
@@ -297,7 +345,7 @@ Matrix Matrix::inv() const
     float value = det();
     if (value == 0)
     {
-        //throw SingularMatrix();
+        throw SingularMatrix();
     }
     Matrix new_matrix = adj();
     for (size_t i = 0; i < rows; i++)

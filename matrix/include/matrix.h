@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-//#include "exceptions.h"
 
 class Matrix
 {
@@ -11,13 +10,20 @@ public:
     Matrix(size_t rows = 0, size_t cols = 0, double base_value = 0);
     Matrix(std::istream& in);
     Matrix(const std::vector<double> &vector);
+    //Matrix(const std::vector<std::vectro<double>> &vector);
     size_t getRows() const;
     size_t getCols() const;
+    void addColum(const std::vector<double> &vector);
+    void addRow(const std::vector<double> &vector);
+
+    void changeRow(const std::vector<double> &vector, size_t row);
+    void changeColum(const std::vector<double> &vector, size_t row);
 
     double operator()(size_t i, size_t j) const;
     double& operator()(size_t i, size_t j);
     bool operator==(const Matrix& matrix) const;
     bool operator!=(const Matrix& matrix) const;
+    void operator=(const Matrix& matrix);
     Matrix operator+(const Matrix& matrix) const;
     Matrix operator-(const Matrix& matrix) const;
     Matrix operator*(const Matrix& matrix) const;
@@ -28,7 +34,7 @@ public:
     double det() const;
     Matrix adj() const;
     Matrix inv() const;
-private:
+protected:
     std::vector<std::vector<double>> _matrix;
 };
 
