@@ -41,9 +41,9 @@ Matrix::Matrix(const std::vector<double> &vector)
 {
     size_t rows = vector.size();
     _matrix.resize(rows);
-    _matrix[0].resize(1);
     for (size_t i = 0; i < rows; ++i)
     {
+        _matrix[i].resize(1);
         _matrix[i][0] = vector[i];
     }
 }
@@ -228,12 +228,11 @@ Matrix Matrix::operator*(const Matrix& matrix) const
     Matrix new_matrix(getRows(), matrix.getCols());
     for (size_t i = 0; i < getRows(); ++i)
     {
-        for (size_t j = 0; j < matrix.getCols(); ++i)
+        for (size_t j = 0; j < matrix.getCols(); ++j)
         {
-            double sum = 0;
             for (size_t k = 0; k < getCols(); ++k)
             {
-                sum += _matrix[i][k] * matrix(k, j);
+                new_matrix(i,j) += _matrix[i][k] * matrix(k, j);
             }
         }
     }
