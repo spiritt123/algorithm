@@ -13,6 +13,9 @@ public:
     //Matrix(const std::vector<std::vectro<double>> &vector);
     size_t getRows() const;
     size_t getCols() const;
+    std::vector<double> getRow(size_t i);
+    std::vector<double> getCol(size_t i);
+
     void addColum(const std::vector<double> &vector);
     void addRow(const std::vector<double> &vector);
 

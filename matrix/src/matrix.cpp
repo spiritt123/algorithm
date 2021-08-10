@@ -59,6 +59,25 @@ size_t Matrix::getCols() const
     return _matrix.size() == 0 ? 0 : _matrix[0].size();
 }
 
+std::vector<double> Matrix::getRow(size_t i)
+{
+    if (i < 0 || i >= getRows())
+        throw OutOfRange(i, 0, *this);
+
+    return _matrix[i];
+}
+
+std::vector<double> Matrix::getCol(size_t j)
+{
+    if (j < 0 || j >= getCols())
+        throw OutOfRange(0, j, *this);
+
+    std::vector<double> answer;
+    for (size_t i = 0; i < getRows(); ++i)
+        answer.push_back(_matrix[i][j]);
+    return answer;
+}
+
 void Matrix::addColum(const std::vector<double> &vector)
 {
     if (vector.size() != getRows())
