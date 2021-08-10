@@ -31,24 +31,24 @@ class OutOfRange : public MatrixException {
         : MatrixException("Indexes (" + std::to_string(i) + ", " +
                           std::to_string(j) +
                           ") are out of range. Matrix size is [" +
-                          std::to_string(matrix.getRows()) + ", " +
-                          std::to_string(matrix.getCols()) + "]") {
+                          std::to_string(matrix.rowCount()) + ", " +
+                          std::to_string(matrix.colCount()) + "]") {
     }
 };
 
 class DimensionMismatch : public MatrixException {
  public:
     DimensionMismatch(const Matrix& m1, const Matrix& m2)
-        : MatrixException("M1[" + std::to_string(m1.getRows()) + ", " +
-                          std::to_string(m1.getCols()) + "] and M2[" +
-                          std::to_string(m2.getRows()) + ", " +
-                          std::to_string(m2.getCols()) +
+        : MatrixException("M1[" + std::to_string(m1.rowCount()) + ", " +
+                          std::to_string(m1.colCount()) + "] and M2[" +
+                          std::to_string(m2.rowCount()) + ", " +
+                          std::to_string(m2.colCount()) +
                           "] are not compatible") {
     }
 
     explicit DimensionMismatch(const Matrix& m)
-        : MatrixException("M[" + std::to_string(m.getRows()) + ", " +
-                          std::to_string(m.getCols()) +
+        : MatrixException("M[" + std::to_string(m.rowCount()) + ", " +
+                          std::to_string(m.colCount()) +
                           "] isn't square matrix") {
     }
 };

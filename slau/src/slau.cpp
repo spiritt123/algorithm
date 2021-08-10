@@ -5,10 +5,10 @@
 
 std::vector<double> Slau::findByKramer()
 {
-    if (getRows() != getCols())
+    if (rowCount() != colCount())
         throw DimensionMismatch(*this);
 
-    if (_offset.size() != getCols())
+    if (_offset.size() != colCount())
         throw DimensionMismatch(*this);
 
     std::vector<double> answer;
@@ -16,7 +16,7 @@ std::vector<double> Slau::findByKramer()
     if (std::abs(det) < 0.0001)
         throw std::invalid_argument("Divide by zero error in fraction!");
     //данный алгоритм описывает учебные дейстиви. Возможная оптимизация: транспонировать, поменять строку, транспонировать.
-    for (size_t i = 0; i < getRows(); ++i)
+    for (size_t i = 0; i < rowCount(); ++i)
     {
         //Matrix new_matrixi(_matrix);
         Slau new_matrix = *this;
@@ -34,11 +34,11 @@ void Slau::addOffset(const std::vector<double> &offset)
 /*
 std::vector<double> Slau::findByGausse()
 {
-    size_t rows = getRows();
-    if (rows != getCols())
+    size_t rows = rowCount();
+    if (rows != colCount())
         throw DimensionMismatch(*this);
 
-    if (_offset.size() != getCols())
+    if (_offset.size() != colCount())
         throw DimensionMismatch(*this);
 
     for (size_t i = 0; i < rows; ++i)
@@ -54,7 +54,7 @@ std::vector<double> Slau::findByGausse()
         for (size_t j = k; j < rows; ++j)
         {
             double alpha = _matrix[j][k - 1] / _matrix[k][k];
-            for (size_t i = 0; i < getCols() + 1; ++i)
+            for (size_t i = 0; i < colCount() + 1; ++i)
             {
                 _matrix[j][i] -= alpha * _matrix[k - 1][i];
             }
@@ -77,10 +77,10 @@ std::vector<double> Slau::findByGausse()
 
 std::vector<double> Slau::findByMatrix()
 {
-    if (getRows() != getCols())
+    if (rowCount() != colCount())
         throw DimensionMismatch(*this);
 
-    if (_offset.size() != getCols())
+    if (_offset.size() != colCount())
         throw DimensionMismatch(*this);
 
     Matrix matrix = inv() * Matrix(_offset);

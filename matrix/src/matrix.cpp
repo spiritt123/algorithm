@@ -49,19 +49,19 @@ Matrix::Matrix(const std::vector<double> &vector)
 }
 
 
-size_t Matrix::getRows() const
+size_t Matrix::rowCount() const
 {
     return _matrix.size();
 }
 
-size_t Matrix::getCols() const
+size_t Matrix::colCount() const
 {
     return _matrix.size() == 0 ? 0 : _matrix[0].size();
 }
 
 std::vector<double> Matrix::getRow(size_t i)
 {
-    if (i < 0 || i >= getRows())
+    if (i < 0 || i >= rowCount())
         throw OutOfRange(i, 0, *this);
 
     return _matrix[i];
@@ -69,21 +69,26 @@ std::vector<double> Matrix::getRow(size_t i)
 
 std::vector<double> Matrix::getCol(size_t j)
 {
-    if (j < 0 || j >= getCols())
+    if (j < 0 || j >= colCount())
         throw OutOfRange(0, j, *this);
 
     std::vector<double> answer;
-    for (size_t i = 0; i < getRows(); ++i)
+    for (size_t i = 0; i < rowCount(); ++i)
         answer.push_back(_matrix[i][j]);
     return answer;
 }
 
+std::vector<std::vector<double>> Matrix::getMatrix()
+{
+    return _matrix;
+}
+
 void Matrix::addColum(const std::vector<double> &vector)
 {
-    if (vector.size() != getRows())
+    if (vector.size() != rowCount())
         throw DimensionMismatch(*this, Matrix(vector));
 
-    for (size_t i = 0; i < getRows(); ++i)
+    for (size_t i = 0; i < rowCount(); ++i)
     {
         _matrix[i].push_back(vector[i]);
     }
@@ -91,7 +96,7 @@ void Matrix::addColum(const std::vector<double> &vector)
 
 void Matrix::addRow(const std::vector<double> &vector)
 {
-    if (vector.size() != getCols())
+    if (vector.size() != colCount())
         throw DimensionMismatch(*this, Matrix(vector));
 
     _matrix.push_back(vector);
@@ -99,7 +104,7 @@ void Matrix::addRow(const std::vector<double> &vector)
 
 void Matrix::changeRow(const std::vector<double> &vector, size_t row)
 {
-    if (row < 0 || row >= getRows())
+    if (row < 0 || row >= rowCount())
         throw OutOfRange(0, row, *this);
 
     _matrix[row] = vector;
@@ -107,10 +112,10 @@ void Matrix::changeRow(const std::vector<double> &vector, size_t row)
 
 void Matrix::changeColum(const std::vector<double> &vector, size_t colum)
 {
-    if (colum < 0 || colum >= getCols())
+    if (colum < 0 || colum >= colCount())
         throw OutOfRange(colum, 0, *this);
     
-    for (size_t j = 0; j < getCols(); ++j)
+    for (size_t j = 0; j < colCount(); ++j)
     {
         _matrix[j][colum] = vector[j];
     }
@@ -119,7 +124,7 @@ void Matrix::changeColum(const std::vector<double> &vector, size_t colum)
     
 double Matrix::operator()(size_t i, size_t j) const
 {
-    if (i >= getRows() || j >= getCols())
+    if (i >= rowCount() || j >= colCount())
         throw OutOfRange(i, j, *this);
 
     return _matrix[i][j];
@@ -127,7 +132,7 @@ double Matrix::operator()(size_t i, size_t j) const
 
 double& Matrix::operator()(size_t i, size_t j)
 {
-    if (i >= getRows() || j >= getCols())
+    if (i >= rowCount() || j >= colCount())
         throw OutOfRange(i, j, *this);
     
     return _matrix[i][j];
@@ -135,15 +140,15 @@ double& Matrix::operator()(size_t i, size_t j)
 
 bool Matrix::operator==(const Matrix& matrix) const
 {
-    if (getRows() != matrix.getRows() ||
-        getCols() != matrix.getCols())
+    if (rowCount() != matrix.rowCount() ||
+        colCount() != matrix.colCount())
     {
         return false;
     }
 
-    for (size_t i = 0; i < getRows(); ++i)
+    for (size_t i = 0; i < rowCount(); ++i)
     {
-        for (size_t j = 0; j < getCols(); ++j)
+        for (size_t j = 0; j < colCount(); ++j)
         {
             if (std::abs(_matrix[i][j] - matrix(i, j)) < 1e-07)
             {
@@ -162,11 +167,11 @@ bool Matrix::operator!=(const Matrix& matrix) const
 
 void Matrix::operator=(const Matrix& matrix)
 {
-    _matrix.resize(matrix.getRows());
-    for (size_t i = 0; i < matrix.getRows(); ++i)
+    _matrix.resize(matrix.rowCount());
+    for (size_t i = 0; i < matrix.rowCount(); ++i)
     {
-        _matrix[i].resize(getCols());
-        for (size_t j = 0; j < matrix.getCols(); ++j)
+        _matrix[i].resize(colCount());
+        for (size_t j = 0; j < matrix.colCount(); ++j)
         {
             _matrix[i][j] = matrix(i, j);
         }
@@ -175,9 +180,9 @@ void Matrix::operator=(const Matrix& matrix)
 
 std::ostream& operator<<(std::ostream& os, const Matrix& matrix)
 {
-    for (size_t i = 0; i < matrix.getRows(); ++i)
+    for (size_t i = 0; i < matrix.rowCount(); ++i)
     {
-        for (size_t j = 0; j < matrix.getCols(); ++j)
+        for (size_t j = 0; j < matrix.colCount(); ++j)
         {
             os << matrix(i, j) << " ";
         }
@@ -188,15 +193,15 @@ std::ostream& operator<<(std::ostream& os, const Matrix& matrix)
 
 Matrix Matrix::operator+(const Matrix& matrix) const
 {
-    if (getRows() != matrix.getRows() ||
-        getCols() != matrix.getCols())
+    if (rowCount() != matrix.rowCount() ||
+        colCount() != matrix.colCount())
     {
         return false;
     }
-    Matrix new_matrix(getRows(), getCols());
-    for (size_t i = 0; i < getRows(); ++i)
+    Matrix new_matrix(rowCount(), colCount());
+    for (size_t i = 0; i < rowCount(); ++i)
     {
-        for (size_t j = 0; j < getCols(); ++j)
+        for (size_t j = 0; j < colCount(); ++j)
         {
             new_matrix(i, j) = _matrix[i][j] + matrix(i, j); 
         }
@@ -207,16 +212,16 @@ Matrix Matrix::operator+(const Matrix& matrix) const
 
 Matrix Matrix::operator-(const Matrix& matrix) const
 {
-    if (getRows() != matrix.getRows() ||
-        getCols() != matrix.getCols())
+    if (rowCount() != matrix.rowCount() ||
+        colCount() != matrix.colCount())
     {
         return false;
     }
 
-    Matrix new_matrix(getRows(), getCols());
-    for (size_t i = 0; i < getRows(); ++i)
+    Matrix new_matrix(rowCount(), colCount());
+    for (size_t i = 0; i < rowCount(); ++i)
     {
-        for (size_t j = 0; j < getCols(); ++j)
+        for (size_t j = 0; j < colCount(); ++j)
         {
             new_matrix(i, j) = _matrix[i][j] - matrix(i, j); 
         }
@@ -226,10 +231,10 @@ Matrix Matrix::operator-(const Matrix& matrix) const
 
 Matrix Matrix::transp() const
 {
-    Matrix new_matrix(getCols(), getRows());
-    for (size_t i = 0; i < getRows(); ++i)
+    Matrix new_matrix(colCount(), rowCount());
+    for (size_t i = 0; i < rowCount(); ++i)
     {
-        for (size_t j = 0; j < getCols(); ++j)
+        for (size_t j = 0; j < colCount(); ++j)
         {
             new_matrix(j, i) = _matrix[i][j]; 
         }
@@ -239,17 +244,17 @@ Matrix Matrix::transp() const
 
 Matrix Matrix::operator*(const Matrix& matrix) const
 {
-    if (getCols() != matrix.getRows())
+    if (colCount() != matrix.rowCount())
     {
         throw DimensionMismatch(*this, matrix);
     }
 
-    Matrix new_matrix(getRows(), matrix.getCols());
-    for (size_t i = 0; i < getRows(); ++i)
+    Matrix new_matrix(rowCount(), matrix.colCount());
+    for (size_t i = 0; i < rowCount(); ++i)
     {
-        for (size_t j = 0; j < matrix.getCols(); ++j)
+        for (size_t j = 0; j < matrix.colCount(); ++j)
         {
-            for (size_t k = 0; k < getCols(); ++k)
+            for (size_t k = 0; k < colCount(); ++k)
             {
                 new_matrix(i,j) += _matrix[i][k] * matrix(k, j);
             }
@@ -260,10 +265,10 @@ Matrix Matrix::operator*(const Matrix& matrix) const
 
 Matrix Matrix::operator*(double value) const
 {
-    Matrix new_matrix(getRows(), getCols());
-    for (size_t i = 0; i < getRows(); ++i)
+    Matrix new_matrix(rowCount(), colCount());
+    for (size_t i = 0; i < rowCount(); ++i)
     {
-        for (size_t j = 0; j < getCols(); ++j)
+        for (size_t j = 0; j < colCount(); ++j)
         {
             new_matrix(i, j) = _matrix[i][j] * value; 
         }
@@ -273,10 +278,10 @@ Matrix Matrix::operator*(double value) const
 
 Matrix operator*(double value, const Matrix& matrix)
 {
-    Matrix new_matrix(matrix.getRows(), matrix.getCols());
-    for (size_t i = 0; i < matrix.getRows(); ++i)
+    Matrix new_matrix(matrix.rowCount(), matrix.colCount());
+    for (size_t i = 0; i < matrix.rowCount(); ++i)
     {
-        for (size_t j = 0; j < matrix.getCols(); ++j)
+        for (size_t j = 0; j < matrix.colCount(); ++j)
         {
             new_matrix(i, j) = matrix(i, j) * value; 
         }
@@ -288,14 +293,14 @@ Matrix Matrix::minor(size_t deleted_row, size_t deleted_col) const
 {
     if (deleted_row < 0 || 
         deleted_col < 0 || 
-        deleted_row >= getRows() || 
-        deleted_col >= getCols())
+        deleted_row >= rowCount() || 
+        deleted_col >= colCount())
     {
         throw OutOfRange(deleted_row, deleted_col, *this);
     }
 
-    size_t row = getRows() - 1;
-    size_t col = getCols() - 1;
+    size_t row = rowCount() - 1;
+    size_t col = colCount() - 1;
     Matrix new_matrix(row, col);
     size_t row_flag = 0;
     for (size_t i = 0; i < row; ++i)
@@ -316,8 +321,8 @@ Matrix Matrix::minor(size_t deleted_row, size_t deleted_col) const
 
 double Matrix::det() const
 {
-    size_t rows = getRows();
-    size_t cols = getCols();
+    size_t rows = rowCount();
+    size_t cols = colCount();
 
     if (rows != cols)
     {
@@ -338,8 +343,8 @@ double Matrix::det() const
 
 Matrix Matrix::adj() const 
 {
-    size_t rows = getRows();
-    size_t cols = getCols();
+    size_t rows = rowCount();
+    size_t cols = colCount();
 
     Matrix new_matrix(cols, rows);
     double value = 0;
@@ -357,8 +362,8 @@ Matrix Matrix::adj() const
 
 Matrix Matrix::inv() const
 {
-    size_t rows = getRows();
-    size_t cols = getCols();
+    size_t rows = rowCount();
+    size_t cols = colCount();
 
     float value = det();
     if (value == 0)

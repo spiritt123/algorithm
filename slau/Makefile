@@ -3,10 +3,11 @@ CC = g++
 CFLAGS = -c -Wall 
 LDFLAGS = 
 INCLUDE = include 
-MATRIX_INCLUDE = ../matrix/include
+INCLUDE_MATRIX = ../matrix/include 
 
 SRC = main slau
-SOURCES = $(addsuffix .cpp, $(addprefix src/, $(SRC))) ../matrix/matrix.a 
+STATIC_LIBS = ../matrix/matrix.a
+SOURCES = $(addsuffix .cpp, $(addprefix src/, $(SRC))) $(STATIC_LIBS)
 OBJECTS = $(SOURCES:.cpp=.o) 
 EXECUTABLE = out
 
@@ -17,7 +18,7 @@ $(EXECUTABLE): $(OBJECTS)
 		-Iinclude
 
 %.o: %.cpp 	
-	g++ -c -o $@ $< -I$(INCLUDE) -I$(MATRIX_INCLUDE)
+	g++ -c -o $@ $< -I$(INCLUDE) -I$(INCLUDE_MATRIX)
 
 
 clear: 	

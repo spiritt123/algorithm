@@ -11,13 +11,15 @@ public:
     Matrix(std::istream& in);
     Matrix(const std::vector<double> &vector);
     //Matrix(const std::vector<std::vectro<double>> &vector);
-    size_t getRows() const;
-    size_t getCols() const;
+    size_t rowCount() const;
+    size_t colCount() const;
     std::vector<double> getRow(size_t i);
     std::vector<double> getCol(size_t i);
 
-    void addColum(const std::vector<double> &vector);
+    std::vector<std::vector<double>> getMatrix();
+
     void addRow(const std::vector<double> &vector);
+    void addColum(const std::vector<double> &vector);
 
     void changeRow(const std::vector<double> &vector, size_t row);
     void changeColum(const std::vector<double> &vector, size_t row);

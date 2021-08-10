@@ -15,8 +15,8 @@
 
 ### Базовые методы
 
-* `size_t Matrix::getRows() const` - получить количество строк.
-* `size_t Matrix::getCols() const` - получить количество столбцов.
+* `size_t Matrix::rowCount() const` - получить количество строк.
+* `size_t Matrix::colCount() const` - получить количество столбцов.
 
 * `double Matrix::operator()(size_t i, size_t j) const` - получить значение
  элемента на позиции `[<i>, <j>]`.
