@@ -164,6 +164,7 @@ void show_manual()
         text.setStyle(sf::Text::Bold | sf::Text::Underlined);
         std::string message;
         message += "Press the button and click mouse :)\n";
+        message += "P - create path\n";
         message += "S - start\n";
         message += "T - target\n";
         message += "W - wall\n";
